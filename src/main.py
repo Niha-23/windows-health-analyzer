@@ -1,37 +1,18 @@
-from src.collectors.system import get_system_metrics
 from src.diagnostics.engine import analyze_system
-
-
-def display_report(metrics: dict, diagnosis: dict) -> None:
-    """Display a human-friendly health report."""
-
-    print("\n========================================")
-    print("       WINDOWS HEALTH ANALYZER")
-    print("========================================\n")
-
-    print(f"CPU Usage:    {metrics['cpu_percent']:.1f}%")
-    print(f"Memory Usage: {metrics['memory_percent']:.1f}%")
-    print(f"Disk Usage:   {metrics['disk_percent']:.1f}%")
-
-    print("\n----------------------------------------")
-    print("DIAGNOSTIC REPORT")
-    print("----------------------------------------\n")
-
-    print(f"Overall Status: {diagnosis['overall_status']}")
-
-    for result in diagnosis["results"]:
-        print(f"\n[{result['severity']}] {result['component']}")
-        print(f"Issue: {result['message']}")
-        print(f"What this means: {result['explanation']}")
-        print(f"Recommended action: {result['recommendation']}")
+from src.reports.health_report import generate_health_report
+from src.system.monitor import collect_system_metrics
 
 
 def main():
-    metrics = get_system_metrics()
+    """
+    Run the Windows Health Analyzer application.
+    """
 
-    diagnosis = analyze_system(metrics)
+    metrics = collect_system_metrics()
+    analysis = analyze_system(metrics)
+    report = generate_health_report(metrics, analysis)
 
-    display_report(metrics, diagnosis)
+    print(report)
 
 
 if __name__ == "__main__":
